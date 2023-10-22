@@ -1,7 +1,7 @@
-import { DatabaseStringType } from '../types';
+import { TDatabaseStringType } from '../types';
 import { getDatabaseFactory } from './databaseFactories';
 
-export function createDatabaseInstance(dbType: DatabaseStringType) {
+export function createDatabaseInstance(dbType: TDatabaseStringType) {
   const factory = getDatabaseFactory(dbType);
 
   if (!factory) {

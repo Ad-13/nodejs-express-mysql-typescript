@@ -1,9 +1,9 @@
-import { DatabaseStringType, IDatabase, IMySQLDatabase } from '../types';
-import { MySQLDatabase } from '../mysqlDatabase';
+import { TDatabaseStringType, IMySQLDatabase } from '../types';
+import { MySQLDatabase } from '../mysql/mysqlDatabase';
 
-export const createMySQLDatabase: () => IMySQLDatabase = () => new MySQLDatabase();
+export const createMySQLDatabase: () => IMySQLDatabase = () => MySQLDatabase.getInstance();
 
-export function getDatabaseFactory(dbType: DatabaseStringType) {
+export function getDatabaseFactory(dbType: TDatabaseStringType) {
   switch (dbType) {
     case 'mysql':
       return createMySQLDatabase;
