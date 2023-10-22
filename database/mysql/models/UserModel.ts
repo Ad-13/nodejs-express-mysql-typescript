@@ -1,7 +1,6 @@
 import { ResultSetHeader } from 'mysql2/promise';
 
 import AbstractModel from './AbstractModel';
-import DatabaseError from '../errors/DatabaseError';
 import { MySQLDatabase } from '../mysqlDatabase';
 import { TUser } from '../../types';
 import { TId } from '../../../types';
@@ -13,10 +12,6 @@ class UserModel extends AbstractModel {
   constructor() {
     super(ETables.Users);
     this.mysqlDB = MySQLDatabase.getInstance();
-  }
-
-  private throwDatabaseError(message: string, status: number): never {
-    throw new DatabaseError(message, status);
   }
 
   async create(data: Partial<TUser>): Promise<Partial<TUser>> {
@@ -113,18 +108,9 @@ export default UserModel;
 //   });
 // }
 
-// readAll(): Promise<IUser[]> {
-//   return new Promise((resolve, reject) => {
-//     connection.query<IUser[]>("SELECT * FROM users", (err, res) => {
-//       if (err) reject(err)
-//       else resolve(res)
-//     })
-//   })
-// }
-
 // const conditions: UserConditions = {
-//   name: 'John', // Имя пользователя
-//   age: 30, // Возраст пользователя
+//   name: 'John',
+//   age: 30,
 // };
 
 // try {

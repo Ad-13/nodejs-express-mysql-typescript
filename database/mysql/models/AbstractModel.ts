@@ -1,4 +1,5 @@
 import { TId } from '../../../types';
+import DatabaseError from '../errors/DatabaseError';
 
 abstract class AbstractModel {
   protected tableName: string;
@@ -7,7 +8,13 @@ abstract class AbstractModel {
     this.tableName = tableName;
   }
 
+  protected throwDatabaseError(message: string, status: number): never {
+    throw new DatabaseError(message, status);
+  }
+
   abstract create(data: Record<string, any>): Promise<Record<string, any>>;
+
+  abstract readById(id: TId): Promise<Record<string, any>>;
 
   abstract read(conditions: Record<string, any>): Promise<Record<string, any>[]>;
 
