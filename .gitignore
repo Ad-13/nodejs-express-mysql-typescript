@@ -1,11 +1,14 @@
 # Node.js
 node_modules/
 
+# distributed
+dist/
+
 # Output of 'npm pack'
 *.tgz
 
 # TypeScript
-*.js
+# *.js
 *.map
 *.d.ts
 *.js.map

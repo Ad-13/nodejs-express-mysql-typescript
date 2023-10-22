@@ -25,15 +25,15 @@ class UserModel extends AbstractModel {
         data.name,
       ]);
 
-      const user = await this.readById(result.insertId);
+      const createdItem = await this.readById(result.insertId);
 
-      return user;
+      return createdItem;
     } catch (error) {
       this.throwDatabaseError('Failed to create a user', 500);
     }
   }
 
-  async readById(id: number): Promise<Partial<TUser>> {
+  async readById(id: TId): Promise<Partial<TUser>> {
     try {
       const sql = 'SELECT * FROM ?? WHERE id = ?';
       const result = await this.mysqlDB.executeQuery<TUser>(sql, [this.tableName, id]);
@@ -63,9 +63,9 @@ class UserModel extends AbstractModel {
 
       if (!result.affectedRows) this.throwDatabaseError('User not found', 404);
 
-      const user = await this.readById(result.insertId);
+      const updatedResult = await this.readById(result.insertId);
 
-      return user;
+      return updatedResult;
     } catch (error) {
       this.throwDatabaseError(`Failed to update user: ${data.id}`, 500);
     }
