@@ -1,15 +1,12 @@
 import AbstractModel from './AbstractModel';
-import { MySQLDatabase } from '../mysqlDatabase';
 import { TUser } from '../../types';
 import { ETables } from '../../utils/tables';
 
 class UserModel extends AbstractModel<TUser> {
-  protected mysqlDB: MySQLDatabase;
   protected columnsForCreate = ['email', 'password', 'name'];
 
   constructor() {
     super(ETables.Users);
-    this.mysqlDB = MySQLDatabase.getInstance();
   }
 }
 

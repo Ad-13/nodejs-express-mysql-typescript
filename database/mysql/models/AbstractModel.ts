@@ -11,6 +11,7 @@ abstract class AbstractModel<T extends RowDataPacket> {
 
   constructor(tableName: string) {
     this.tableName = tableName;
+    this.mysqlDB = MySQLDatabase.getInstance();
   }
 
   protected throwDatabaseError(message: string, status: number): never {

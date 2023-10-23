@@ -11,7 +11,28 @@ export type TCar = RowDataPacket & {
   year: number
 }
 
+export type TCarPart = RowDataPacket & {
+  id: TId
+  car_id: TId
+  name: string
+  price: number
+}
+
 export type TUser = RowDataPacket & {
+  id: TId
+  name: string
+  email: string
+  password: string
+}
+
+export type TSeller = RowDataPacket & {
+  id: TId
+  name: string
+  email: string
+  password: string
+}
+
+export type TClient = RowDataPacket & {
   id: TId
   name: string
   email: string
