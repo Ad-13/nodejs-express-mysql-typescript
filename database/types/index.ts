@@ -1,43 +1,18 @@
 import { RowDataPacket } from 'mysql2';
 
-import { TId } from '../../types';
+import { TCar, TCarPart, TClient, TSeller, TUser } from '../../types';
 
 export type TDatabaseStringType = 'mysql' | 'mongo' | string | undefined;
 
-export type TCar = RowDataPacket & {
-  id: TId
-  make: string
-  model: string
-  year: number
-}
+export type TCarRowDataPacket = RowDataPacket & TCar
 
-export type TCarPart = RowDataPacket & {
-  id: TId
-  car_id: TId
-  name: string
-  price: number
-}
+export type TCarPartRowDataPacket = RowDataPacket & TCarPart
 
-export type TUser = RowDataPacket & {
-  id: TId
-  name: string
-  email: string
-  password: string
-}
+export type TUserRowDataPacket = RowDataPacket & TUser
 
-export type TSeller = RowDataPacket & {
-  id: TId
-  name: string
-  email: string
-  password: string
-}
+export type TSellerRowDataPacket = RowDataPacket & TSeller
 
-export type TClient = RowDataPacket & {
-  id: TId
-  name: string
-  email: string
-  password: string
-}
+export type TClientRowDataPacket = RowDataPacket & TClient
 
 export interface IDatabase {
   connect(): Promise<void>;

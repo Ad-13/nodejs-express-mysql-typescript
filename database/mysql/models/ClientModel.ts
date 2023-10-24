@@ -1,8 +1,8 @@
 import AbstractModel from './AbstractModel';
-import { TClient } from '../../types';
+import { TClientRowDataPacket } from '../../types';
 import { ETables } from '../../utils/tables';
 
-class ClientModel extends AbstractModel<TClient> {
+class ClientModel extends AbstractModel<TClientRowDataPacket> {
   protected columnsForCreate = ['email', 'password', 'name'];
 
   constructor() {

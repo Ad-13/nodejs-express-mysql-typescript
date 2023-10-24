@@ -1,8 +1,8 @@
 import AbstractModel from './AbstractModel';
-import { TUser } from '../../types';
+import { TUserRowDataPacket } from '../../types';
 import { ETables } from '../../utils/tables';
 
-class UserModel extends AbstractModel<TUser> {
+class UserModel extends AbstractModel<TUserRowDataPacket> {
   protected columnsForCreate = ['email', 'password', 'name'];
 
   constructor() {

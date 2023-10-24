@@ -1,10 +1,10 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 
-import { TId } from '../../../types';
+import { TId, TModel } from '../../../types';
 import { MySQLDatabase } from '../mysqlDatabase';
 import DatabaseError from '../errors/DatabaseError';
 
-abstract class AbstractModel<T extends RowDataPacket> {
+abstract class AbstractModel<T extends RowDataPacket> implements TModel<T> {
   protected tableName: string;
   protected mysqlDB: MySQLDatabase;
   protected abstract columnsForCreate: string[];
@@ -18,7 +18,7 @@ abstract class AbstractModel<T extends RowDataPacket> {
     throw new DatabaseError(message, status);
   }
 
-  protected async create(data: Partial<T>): Promise<Partial<T>> {
+  async create(data: Partial<T>): Promise<Partial<T>> {
     try {
       const sql = `INSERT INTO ?? (${this.columnsForCreate.join(', ')}) VALUES(?,?,?)`;
 
@@ -37,7 +37,7 @@ abstract class AbstractModel<T extends RowDataPacket> {
     }
   }
 
-  protected async readById(id: TId): Promise<Partial<T>> {
+  async readById(id: TId): Promise<Partial<T>> {
     try {
       const sql = 'SELECT * FROM ?? WHERE id = ?';
       const result = await this.mysqlDB.executeQuery<T>(sql, [this.tableName, id]);
@@ -50,7 +50,7 @@ abstract class AbstractModel<T extends RowDataPacket> {
     }
   }
 
-  protected async read(conditions: Partial<T>): Promise<T[]> {
+  async read(conditions: Partial<T>): Promise<Partial<T>[]> {
     try {
       const sql = 'SELECT * FROM ?? WHERE ?';
       const result = await this.mysqlDB.executeQuery<T>(sql, [this.tableName, { ...conditions }]);
@@ -60,7 +60,7 @@ abstract class AbstractModel<T extends RowDataPacket> {
     }
   }
 
-  protected async update(data: Partial<T>): Promise<Partial<T>> {
+  async update(data: Partial<T>): Promise<Partial<T>> {
     try {
       const sql = 'UPDATE ?? SET ? WHERE id = ?';
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [this.tableName, data, data.id]);
@@ -75,7 +75,7 @@ abstract class AbstractModel<T extends RowDataPacket> {
     }
   }
 
-  protected async delete(id: TId): Promise<TId> {
+  async delete(id: TId): Promise<TId> {
     try {
       const sql = 'DELETE FROM ?? WHERE id = ?';
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [this.tableName, id]);

@@ -22,7 +22,7 @@ export class MySQLDatabase implements IMySQLDatabase {
     if (this.connection) return;
 
     try {
-      this.connection = await mysql.createConnection(databaseConfig);
+      this.connection = await mysql.createPool(databaseConfig);
     } catch (error) {
       console.error('Failed to connect to the database:', error);
     }
@@ -48,11 +48,11 @@ export class MySQLDatabase implements IMySQLDatabase {
       const isSelectQuery = query.trim().startsWith('SELECT');
 
       if (isSelectQuery) {
-        const [rows] = await this.connection.query(query, values);
+        const [rows] = await this.connection.execute(query, values);
         return rows as T[];
       }
 
-      const [result] = await this.connection.query(query, values);
+      const [result] = await this.connection.execute(query, values);
       return result as T;
     } catch (error) {
       throw new DatabaseError(`Failed to executeQuery: ${(error as Error).message}`, 500);
@@ -65,7 +65,7 @@ export class MySQLDatabase implements IMySQLDatabase {
     }
 
     try {
-      const [rows] = await this.connection.query<RowDataPacket[]>('SELECT 1');
+      const [rows] = await this.connection.execute<RowDataPacket[]>('SELECT 1');
       if (rows.length === 1 && rows[0][1] === 1) {
         return true;
       }
@@ -82,7 +82,7 @@ export class MySQLDatabase implements IMySQLDatabase {
 //   }
 
 //   try {
-//     const [rows] = await this.connection.query<RowDataPacket[]>(query, values);
+//     const [rows] = await this.connection.execute<RowDataPacket[]>(query, values);
 //     return rows;
 //   } catch (error) {
 //     throw new Error('Failed to queryRows');
@@ -95,7 +95,7 @@ export class MySQLDatabase implements IMySQLDatabase {
 //   }
 
 //   try {
-//     const [rows] = await this.connection.query<RowDataPacket[][]>(query, values);
+//     const [rows] = await this.connection.execute<RowDataPacket[][]>(query, values);
 //     return rows;
 //   } catch (error) {
 //     throw new Error('Failed to queryRows');
@@ -108,7 +108,7 @@ export class MySQLDatabase implements IMySQLDatabase {
 //   }
 
 //   try {
-//     const [rows] = await this.connection.query<ResultSetHeader>(query, values);
+//     const [rows] = await this.connection.execute<ResultSetHeader>(query, values);
 //     return rows;
 //   } catch (error) {
 //     throw new Error('Failed to queryRows');
@@ -121,7 +121,7 @@ export class MySQLDatabase implements IMySQLDatabase {
 //   }
 
 //   try {
-//     const [rows] = await this.connection.query<ResultSetHeader[]>(query, values);
+//     const [rows] = await this.connection.execute<ResultSetHeader[]>(query, values);
 //     return rows;
 //   } catch (error) {
 //     throw new Error('Failed to queryRows');

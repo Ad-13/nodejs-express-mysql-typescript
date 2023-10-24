@@ -1,8 +1,8 @@
 import AbstractModel from './AbstractModel';
-import { TSeller } from '../../types';
+import { TSellerRowDataPacket } from '../../types';
 import { ETables } from '../../utils/tables';
 
-class SellerModel extends AbstractModel<TSeller> {
+class SellerModel extends AbstractModel<TSellerRowDataPacket> {
   protected columnsForCreate = ['email', 'password', 'name'];
 
   constructor() {

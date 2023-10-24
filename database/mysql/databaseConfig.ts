@@ -1,4 +1,6 @@
-export const databaseConfig = {
+import { PoolOptions } from "mysql2";
+
+export const databaseConfig: PoolOptions = {
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
