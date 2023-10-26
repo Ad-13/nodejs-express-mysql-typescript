@@ -8,6 +8,7 @@ import express, { Application } from 'express';
 import * as bodyParser from 'body-parser';
 
 import { createDatabaseInstance } from '@root/database/utils/createDatabaseInstance';
+import userRouter from '@app/routes/UserRouter';
 
 const db = createDatabaseInstance(process.env.DB_TYPE);
 const app: Application = express();
@@ -15,10 +16,8 @@ const port = process.env.PORT || 7000;
 
 app.use(bodyParser.json());
 
-// Определение маршрутов
-app.get('/', (req, res) => {
-  res.send('Добро пожаловать в AutoStore Backend!');
-});
+// Routes
+app.use('/api', userRouter);
 
 // Другие маршруты и настройки могут быть добавлены здесь
 
