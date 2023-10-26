@@ -8,11 +8,11 @@ class SellerRouter extends BaseRouter<TSeller> {
   }
 
   protected initRoutes(): void {
-    this.router.post('/sellers', this.routeController.create);
-    this.router.get('/sellers/:id', this.routeController.getById);
-    this.router.get('/sellers', this.routeController.getAll);
-    this.router.put('/sellers/:id', this.routeController.update);
-    this.router.delete('/sellers/:id', this.routeController.delete);
+    this.router.post('/', this.routeController.create);
+    this.router.get('/:id', this.routeController.getById);
+    this.router.get('/', this.routeController.getAll);
+    this.router.put('/:id', this.routeController.update);
+    this.router.delete('/:id', this.routeController.delete);
   }
 }
 

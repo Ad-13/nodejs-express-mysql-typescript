@@ -2,11 +2,11 @@
   "name": "autostore-be",
   "version": "1.0.0",
   "description": "Backend for AutoStore",
-  "main": "dist/app.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "ts-node src/app.ts",
-    "devn": "nodemon src/app.ts",
+    "start": "node dist/server.js",
+    "dev": "ts-node ./server.ts",
+    "devn": "nodemon ./server.ts",
     "build": "tsc"
   },
   "author": "Ad",

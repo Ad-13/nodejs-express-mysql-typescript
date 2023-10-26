@@ -8,11 +8,11 @@ class CarPartRouter extends BaseRouter<TCarPart> {
   }
 
   protected initRoutes(): void {
-    this.router.post('/car-parts', this.routeController.create);
-    this.router.get('/car-parts/:id', this.routeController.getById);
-    this.router.get('/car-parts', this.routeController.getAll);
-    this.router.put('/car-parts/:id', this.routeController.update);
-    this.router.delete('/car-parts/:id', this.routeController.delete);
+    this.router.post('/', this.routeController.create);
+    this.router.get('/:id', this.routeController.getById);
+    this.router.get('/', this.routeController.getAll);
+    this.router.put('/:id', this.routeController.update);
+    this.router.delete('/:id', this.routeController.delete);
   }
 }
 
