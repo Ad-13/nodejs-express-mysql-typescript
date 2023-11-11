@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import cors, { CorsOptions } from 'cors';
 import 'express-async-errors';
+import path from 'path';
 // import cookieParser from 'cookie-parser';
 
 import Routes from './routes';
@@ -21,6 +22,7 @@ export default class Server {
 
     app.use(cors(corsOptions));
     app.use(express.json());
+    app.use(express.static(path.resolve(__dirname, 'static')));
     app.use(express.urlencoded({ extended: true }));
     app.use(errorHandler);
   }
