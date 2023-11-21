@@ -1,10 +1,10 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 
-import { TId, TModel } from '../../../types';
+import { TId, TCrudModel } from '../../../types';
 import { MySQLDatabase } from '../mysqlDatabase';
 import DatabaseError from '../errors/DatabaseError';
 
-abstract class AbstractModel<T extends RowDataPacket> implements TModel<T> {
+abstract class AbstractCrudModel<T> implements TCrudModel<T> {
   protected tableName: string;
   protected mysqlDB: MySQLDatabase;
   protected abstract columnsForCreate: string[];
@@ -18,15 +18,13 @@ abstract class AbstractModel<T extends RowDataPacket> implements TModel<T> {
     throw new DatabaseError(message, status);
   }
 
-  async create(data: Partial<T>): Promise<Partial<T>> {
+  async create(data: Partial<T>): Promise<T> {
     try {
       const sql = `INSERT INTO ?? (${this.columnsForCreate.join(', ')}) VALUES(?,?,?)`;
 
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [
         this.tableName,
-        data.email,
-        data.password,
-        data.name,
+        Object.values(data),
       ]);
 
       const createdItem = await this.readById(result.insertId);
@@ -37,10 +35,10 @@ abstract class AbstractModel<T extends RowDataPacket> implements TModel<T> {
     }
   }
 
-  async readById(id: TId): Promise<Partial<T>> {
+  async readById(id: TId): Promise<T> {
     try {
       const sql = 'SELECT * FROM ?? WHERE id = ?';
-      const result = await this.mysqlDB.executeQuery<T>(sql, [this.tableName, id]);
+      const result = await this.mysqlDB.executeQuery<T & RowDataPacket>(sql, [this.tableName, id]);
 
       if (!result.length) this.throwDatabaseError('Not found', 404);
 
@@ -50,17 +48,17 @@ abstract class AbstractModel<T extends RowDataPacket> implements TModel<T> {
     }
   }
 
-  async read(conditions: Partial<T>): Promise<Partial<T>[]> {
+  async read(conditions: Partial<T>): Promise<T[]> {
     try {
       const sql = 'SELECT * FROM ?? WHERE ?';
-      const result = await this.mysqlDB.executeQuery<T>(sql, [this.tableName, { ...conditions }]);
+      const result = await this.mysqlDB.executeQuery<T & RowDataPacket>(sql, [this.tableName, { ...conditions }]);
       return result;
     } catch (error) {
       this.throwDatabaseError(`Failed to find in ${this.tableName}`, 500);
     }
   }
 
-  async update(data: Partial<T>): Promise<Partial<T>> {
+  async update(data: Partial<T> & { id?: TId}): Promise<T> {
     try {
       const sql = 'UPDATE ?? SET ? WHERE id = ?';
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [this.tableName, data, data.id]);
@@ -82,11 +80,11 @@ abstract class AbstractModel<T extends RowDataPacket> implements TModel<T> {
 
       if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
 
-      return id;
+      return result.insertId;
     } catch (error) {
-      this.throwDatabaseError(`Failed to delete: ${this.tableName}: ${id}`, 500);
+      this.throwDatabaseError(`Failed to delete: ${id}`, 500);
     }
   }
 }
 
-export default AbstractModel;
+export default AbstractCrudModel;

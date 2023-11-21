@@ -10,7 +10,7 @@ exports.up = async function(knex) {
       table.increments('id').primary();
       table.string('name', 255).notNullable();
       table.decimal('price').notNullable();
-      table.integer('car_id').unsigned().references('id').inTable('cars');
+      table.integer('carId').unsigned().references('id').inTable('cars');
     });
   }
 };

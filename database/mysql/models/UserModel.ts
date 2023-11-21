@@ -1,8 +1,8 @@
-import AbstractModel from './AbstractModel';
-import { TUserRowDataPacket } from '../../types';
+import AbstractCrudModel from './AbstractCrudModel';
 import { ETables } from '../../utils/tables';
+import { TUser } from '@root/types';
 
-class UserModel extends AbstractModel<TUserRowDataPacket> {
+class UserModel extends AbstractCrudModel<TUser> {
   protected columnsForCreate = ['email', 'password', 'name'];
 
   constructor() {
@@ -10,7 +10,7 @@ class UserModel extends AbstractModel<TUserRowDataPacket> {
   }
 }
 
-export default UserModel;
+export default new UserModel();
 
 // retrieveAll(searchParams: {title?: string, published?: boolean}): Promise<Tutorial[]> {
 //   let query: string = "SELECT * FROM tutorials";

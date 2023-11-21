@@ -1,8 +1,8 @@
-import BaseRouter from './BaseRouter';
+import CrudRouter from './CrudRouter';
 import ClientController from '../controllers/ClientController';
 import { TClient } from '@root/types';
 
-class ClientRouter extends BaseRouter<TClient> {
+class ClientRouter extends CrudRouter<TClient> {
   constructor() {
     super(ClientController);
   }

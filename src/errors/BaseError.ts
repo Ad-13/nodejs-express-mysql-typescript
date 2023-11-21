@@ -1,4 +1,3 @@
-// errors/BaseError.ts
 import { CustomError } from './CustomError';
 
 export default class BaseError extends CustomError {

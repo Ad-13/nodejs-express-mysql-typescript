@@ -1,8 +1,8 @@
-import AbstractModel from './AbstractModel';
-import { TSellerRowDataPacket } from '../../types';
+import AbstractCrudModel from './AbstractCrudModel';
 import { ETables } from '../../utils/tables';
+import { TSeller } from '@root/types';
 
-class SellerModel extends AbstractModel<TSellerRowDataPacket> {
+class SellerModel extends AbstractCrudModel<TSeller> {
   protected columnsForCreate = ['email', 'password', 'name'];
 
   constructor() {
@@ -10,4 +10,4 @@ class SellerModel extends AbstractModel<TSellerRowDataPacket> {
   }
 }
 
-export default SellerModel;
+export default new SellerModel();

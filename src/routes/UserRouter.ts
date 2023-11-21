@@ -1,8 +1,8 @@
-import BaseRouter from './BaseRouter';
+import CrudRouter from './CrudRouter';
 import UserController from '../controllers/UserController';
 import { TUser } from '@root/types';
 
-class UserRouter extends BaseRouter<TUser> {
+class UserRouter extends CrudRouter<TUser> {
   constructor() {
     super(UserController);
   }

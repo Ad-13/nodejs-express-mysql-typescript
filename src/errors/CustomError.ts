@@ -1,7 +1,4 @@
-export type CustomErrorContent = {
-  message: string,
-  context?: { [key: string]: any }
-};
+import { CustomErrorContent } from "@app/types";
 
 export abstract class CustomError extends Error {
   abstract readonly statusCode: number;

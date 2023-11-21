@@ -1,12 +1,10 @@
 import { Router } from 'express';
 
-import AbstractController from '@app/controllers/AbstractController';
-
-abstract class BaseRouter<T> {
+abstract class BaseRouter<TController> {
   protected router: Router;
-  protected routeController: AbstractController<T>;
+  protected routeController: TController;
 
-  constructor(Controller: new () => AbstractController<T>) {
+  constructor(Controller: new () => TController) {
     this.routeController = new Controller();
     this.router = Router();
     this.initRoutes();

@@ -1,8 +1,8 @@
-import AbstractModel from './AbstractModel';
-import { TCarRowDataPacket } from '../../types';
+import AbstractCrudModel from './AbstractCrudModel';
 import { ETables } from '../../utils/tables';
+import { TCar } from '@root/types';
 
-class CarModel extends AbstractModel<TCarRowDataPacket> {
+class CarModel extends AbstractCrudModel<TCar> {
   protected columnsForCreate = ['make', 'model', 'year'];
 
   constructor() {
@@ -10,4 +10,4 @@ class CarModel extends AbstractModel<TCarRowDataPacket> {
   }
 }
 
-export default CarModel;
+export default new CarModel();

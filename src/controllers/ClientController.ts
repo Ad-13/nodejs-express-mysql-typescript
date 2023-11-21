@@ -1,9 +1,9 @@
 import ClientModel from '@db/models/UserModel';
 import { TClient } from '@root/types';
-import AbstractController from './AbstractController';
+import AbstractCrudController from './AbstractCrudController';
 
-class ClientController extends AbstractController<TClient> {
-  protected model = new ClientModel();
+class ClientController extends AbstractCrudController<TClient> {
+  protected model = ClientModel;
 }
 
 export default ClientController;

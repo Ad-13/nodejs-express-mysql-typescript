@@ -1,9 +1,9 @@
 import UserModel from '@db/models/UserModel';
 import { TUser } from '@root/types';
-import AbstractController from './AbstractController';
+import AbstractCrudController from './AbstractCrudController';
 
-class UserController extends AbstractController<TUser> {
-  protected model = new UserModel();
+class UserController extends AbstractCrudController<TUser> {
+  protected model = UserModel;
 }
 
 export default UserController;

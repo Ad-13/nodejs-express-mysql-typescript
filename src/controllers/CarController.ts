@@ -1,9 +1,9 @@
 import CarModel from '@db/models/CarModel';
 import { TCar } from '@root/types';
-import AbstractController from './AbstractController';
+import AbstractCrudController from './AbstractCrudController';
 
-class CarController extends AbstractController<TCar> {
-  protected model = new CarModel();
+class CarController extends AbstractCrudController<TCar> {
+  protected model = CarModel;
 }
 
 export default CarController;

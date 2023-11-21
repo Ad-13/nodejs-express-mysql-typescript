@@ -1,8 +1,8 @@
-import BaseRouter from './BaseRouter';
+import CrudRouter from './CrudRouter';
 import CarController from '../controllers/CarController';
 import { TCar } from '@root/types';
 
-class CarRouter extends BaseRouter<TCar> {
+class CarRouter extends CrudRouter<TCar> {
   constructor() {
     super(CarController);
   }

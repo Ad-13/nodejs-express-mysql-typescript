@@ -3,8 +3,7 @@ import logger from '@root/logger';
 
 import { CustomError } from "@app/errors/CustomError";
 
-export const errorHandler = (err: Error, _req: Request, res: Response) => {
-  // Handled errors
+export const errorMiddleware = (err: Error, _req: Request, res: Response) => {
   if(err instanceof CustomError) {
     const { statusCode, errors, logging } = err;
 
@@ -19,7 +18,6 @@ export const errorHandler = (err: Error, _req: Request, res: Response) => {
     return res.status(statusCode).send({ errors });
   }
 
-  // Unhandled errors
   console.error(JSON.stringify(err, null, 2));
   return res.status(500).send({ errors: [{ message: "Something went wrong" }] });
 };

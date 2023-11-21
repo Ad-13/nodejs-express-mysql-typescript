@@ -1,10 +1,10 @@
 export type TId = number | string;
 
-export type TModel<T> = {
-  create(data: Partial<T>): Promise<Partial<T>>
-  readById(id: TId): Promise<Partial<T>>
-  read(conditions: Partial<T>): Promise<Partial<T>[]>
-  update(data: Partial<T>): Promise<Partial<T>>
+export type TCrudModel<T> = {
+  create(data: Partial<T>): Promise<T>
+  readById(id: TId): Promise<T>
+  read(conditions: Partial<T>): Promise<T[]>
+  update(data: Partial<T>): Promise<T>
   delete(id: TId): Promise<TId>
 }
 
@@ -27,6 +27,8 @@ export type TUser = {
   name: string
   email: string
   password: string
+  isActivated: boolean
+  activationLink: string
 }
 
 export type TSeller = {
@@ -41,4 +43,11 @@ export type TClient = {
   name: string
   email: string
   password: string
+}
+
+export type TToken = {
+  id: TId
+  userId: TId
+  refreshToken: string
+  expiresAt: Date
 }

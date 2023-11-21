@@ -1,9 +1,9 @@
 import SellerModel from '@db/models/SellerModel';
 import { TSeller } from '@root/types';
-import AbstractController from './AbstractController';
+import AbstractCrudController from './AbstractCrudController';
 
-class SellerController extends AbstractController<TSeller> {
-  protected model = new SellerModel();
+class SellerController extends AbstractCrudController<TSeller> {
+  protected model = SellerModel;
 }
 
 export default SellerController;

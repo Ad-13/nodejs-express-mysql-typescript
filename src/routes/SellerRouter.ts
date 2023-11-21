@@ -1,8 +1,8 @@
-import BaseRouter from './BaseRouter';
+import CrudRouter from './CrudRouter';
 import SellerController from '../controllers/SellerController';
 import { TSeller } from '@root/types';
 
-class SellerRouter extends BaseRouter<TSeller> {
+class SellerRouter extends CrudRouter<TSeller> {
   constructor() {
     super(SellerController);
   }
