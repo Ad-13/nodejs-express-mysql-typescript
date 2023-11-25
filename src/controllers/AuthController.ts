@@ -1,22 +1,37 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { check } from 'express-validator';
 
 import authService from '@app/services/AuthService';
 
 import * as Errors from '@app/errors';
 
+import { validateExpressData } from '@app/utils/validateExpressData';
 import { TUser } from '@root/types';
 import { TAuthController, TUserLoginData } from '@app/types';
 
 const maxCookieAge = 30 * 24 * 60 * 60 * 1000;
 
 class AuthController implements TAuthController {
-  async registrate(req: Request<{}, {}, Partial<TUser>>, res: Response<TUserLoginData>): Promise<void> {
-    const errors = validationResult(req);
+  private async validateRegistrateData(req: Request<{}, {}, Partial<TUser>>): Promise<void> {
+    const rules = [
+      check('email', 'Invalid email').notEmpty().isEmail(),
+      check('password', 'Password is required').notEmpty().isLength({ min: 3, max: 32 }),
+    ];
 
-    if (!errors.isEmpty()) {
-      throw new Errors.ValidationError({ message: 'Validation Error', context: errors.array() });
-    }
+    validateExpressData(rules, req);
+  }
+
+  private async validateLoginData(req: Request<{}, {}, Partial<TUser>>): Promise<void> {
+    const rules = [
+      check('email', 'Invalid email').notEmpty().isEmail(),
+      check('password', 'Password is required').notEmpty(),
+    ];
+
+    validateExpressData(rules, req);
+  }
+
+  async registrate(req: Request<{}, {}, Partial<TUser>>, res: Response<TUserLoginData>): Promise<void> {
+    this.validateRegistrateData(req);
 
     const { email, password } = req.body;
 
@@ -26,11 +41,11 @@ class AuthController implements TAuthController {
   }
 
   async login(req: Request<{}, {}, Partial<TUser>>, res: Response<TUserLoginData>): Promise<void> {
+    this.validateLoginData(req);
+
     const { email, password } = req.body;
 
-    if (!email || !password) throw new Errors.ValidationError();
-
-    const userData = await authService.login(email, password);
+    const userData = await authService.login(email!, password!);
     res.cookie('refreshToken', userData.refreshToken, { maxAge: maxCookieAge, httpOnly: true });
     res.json(userData);
   }

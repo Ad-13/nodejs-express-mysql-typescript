@@ -1,19 +1,18 @@
 import CrudRouter from './CrudRouter';
-import CarPartController from '../controllers/CarPartController';
-import { TCarPart } from '@root/types';
+import RoleController from '../controllers/RoleController';
+import { TRole } from '@root/types';
 
-class CarPartRouter extends CrudRouter<TCarPart> {
+class RoleRouter extends CrudRouter<TRole> {
   constructor() {
-    super(CarPartController);
+    super(RoleController);
   }
 
   protected initRoutes(): void {
     this.router.post('/', this.routeController.create);
-    this.router.get('/:id', this.routeController.getById);
     this.router.get('/', this.routeController.getAll);
     this.router.put('/:id', this.routeController.update);
     this.router.delete('/:id', this.routeController.deleteById);
   }
 }
 
-export default new CarPartRouter().getRouter();
+export default new RoleRouter().getRouter();

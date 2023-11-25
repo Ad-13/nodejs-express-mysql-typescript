@@ -19,12 +19,14 @@ abstract class AbstractCrudModel<T> implements TCrudModel<T> {
   }
 
   async create(data: Partial<T>): Promise<T> {
-    try {
-      const sql = `INSERT INTO ?? (${this.columnsForCreate.join(', ')}) VALUES(?,?,?)`;
+    const values = Object.values(data);
+    const valuesPlaceholder = Array.from({ length: values.length }, () => '?').join(',');
+    const sql = `INSERT INTO ?? (${this.columnsForCreate.join(', ')}) VALUES(${valuesPlaceholder})`;
 
+    try {
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [
         this.tableName,
-        Object.values(data),
+        ...Object.values(data),
       ]);
 
       const createdItem = await this.readById(result.insertId);
@@ -65,7 +67,7 @@ abstract class AbstractCrudModel<T> implements TCrudModel<T> {
 
       if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
 
-      const updatedResult = await this.readById(result.insertId);
+      const updatedResult = await this.readById(data.id!);
 
       return updatedResult;
     } catch (error) {
@@ -73,17 +75,32 @@ abstract class AbstractCrudModel<T> implements TCrudModel<T> {
     }
   }
 
-  async delete(id: TId): Promise<TId> {
+  async delete(conditions: Partial<T>): Promise<void> {
+    if (!Object.keys(conditions).length) this.throwDatabaseError('Conditions not set', 404);
+
+    try {
+      const sql = 'DELETE FROM ?? WHERE ?';
+      const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [this.tableName, { ...conditions }]);
+
+      if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
+    } catch (error) {
+      this.throwDatabaseError(`Failed to delete`, 500);
+    }
+  }
+
+  async deleteById(id: TId): Promise<TId> {
+    if (!id) this.throwDatabaseError('Id not set', 404);
+
     try {
       const sql = 'DELETE FROM ?? WHERE id = ?';
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [this.tableName, id]);
 
       if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
-
-      return result.insertId;
     } catch (error) {
-      this.throwDatabaseError(`Failed to delete: ${id}`, 500);
+      this.throwDatabaseError(`Failed to delete`, 500);
     }
+
+    return id;
   }
 }
 

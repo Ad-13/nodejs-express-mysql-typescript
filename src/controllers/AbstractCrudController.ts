@@ -50,15 +50,15 @@ abstract class AbstractCrudController<T> implements TCrudController<T> {
     res.status(200).json(result);
   }
 
-  async delete(req: Request<TIdParams>, res: Response<TId>): Promise<void> {
-    const id = req.params.id;
+  async deleteById(req: Request<TIdParams>, res: Response<TId>): Promise<void> {
+    const { id } = req.params;
 
     // TODO: check permissions
     if (false) {
       throw new Errors.ForbiddenError();
     }
 
-    const result = await this.model.delete(id);
+    const result = await this.model.deleteById(id);
     res.status(200).json(result);
   }
 }

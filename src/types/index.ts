@@ -19,7 +19,7 @@ export type TCrudController<T> = {
   getById(req: Request<TIdParams>, res: Response<Partial<T>>): Promise<void>
   getAll(req: Request<{}, {}, Partial<T>>, res: Response<Partial<T>[]>): Promise<void>
   update(req: Request<{}, {}, Partial<T>>, res: Response<Partial<T>>): Promise<void>
-  delete(req: Request<TIdParams>, res: Response<TId>): Promise<void>
+  deleteById(req: Request<TIdParams>, res: Response<TId>): Promise<void>
 }
 
 export type TAuthController = {

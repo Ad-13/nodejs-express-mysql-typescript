@@ -38,7 +38,7 @@ class TokenService {
   }
 
   async removeToken(refreshToken: string): Promise<string> {
-    return tokenModel.delete(refreshToken);
+    return tokenModel.deleteToken(refreshToken);
   }
 
   async findToken(refreshToken: string): Promise<Partial<TToken>> {

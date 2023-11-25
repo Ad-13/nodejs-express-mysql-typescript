@@ -3,15 +3,12 @@
  * @returns { Promise<void> }
  */
 exports.up = async function(knex) {
-  const isExists = await knex.schema.hasTable('users');
+  const isExists = await knex.schema.hasTable('roles');
 
   if (!isExists) {
-    return knex.schema.createTable('users', function(table) {
+    return knex.schema.createTable('roles', (table) => {
       table.increments('id').primary();
-      table.string('name');
-      table.string('email').unique();
-      table.string('password');
-      table.json('roles').defaultTo("[1]");
+      table.integer('value').notNullable().unique().defaultTo(1);
     });
   }
 };
@@ -21,5 +18,5 @@ exports.up = async function(knex) {
  * @returns { Promise<void> }
  */
 exports.down = function(knex) {
-  return knex.schema.dropTable('users');
+  return knex.schema.dropTableIfExists('roles');
 };

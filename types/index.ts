@@ -1,3 +1,5 @@
+import { ERoles } from '@root/enums/ERoles';
+
 export type TId = number | string;
 
 export type TCrudModel<T> = {
@@ -5,7 +7,8 @@ export type TCrudModel<T> = {
   readById(id: TId): Promise<T>
   read(conditions: Partial<T>): Promise<T[]>
   update(data: Partial<T>): Promise<T>
-  delete(id: TId): Promise<TId>
+  delete(id: Partial<T>): Promise<void>
+  deleteById(id: TId): Promise<TId>
 }
 
 export type TCar = {
@@ -29,6 +32,7 @@ export type TUser = {
   password: string
   isActivated: boolean
   activationLink: string
+  roles: ERoles[]
 }
 
 export type TSeller = {
@@ -50,4 +54,16 @@ export type TToken = {
   userId: TId
   refreshToken: string
   expiresAt: Date
+}
+
+export type TRole = {
+  id: TId
+  value: string
+  description: string
+}
+
+export type TUserRole = {
+  id: TId
+  userId: TId
+  roleId: TId
 }

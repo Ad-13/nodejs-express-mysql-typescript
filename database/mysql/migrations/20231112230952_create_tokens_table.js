@@ -8,9 +8,9 @@ exports.up = async function(knex) {
   if (!isExists) {
     return knex.schema.createTable('tokens', (table) => {
       table.increments('id').primary();
-      table.string('refreshToken', 255).notNullable();
+      table.text('refreshToken').notNullable();
       table.integer('userId').unsigned().references('id').inTable('users');
-      table.timestamp('expiresAt').nullable();
+      table.timestamp('expiresAt').notNullable().defaultTo(knex.fn.now());;
     });
   }
 };

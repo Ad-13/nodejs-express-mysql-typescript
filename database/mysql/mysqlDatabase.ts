@@ -25,16 +25,24 @@ export class MySQLDatabase implements IMySQLDatabase {
       this.connection = await mysql.createPool(databaseConfig);
     } catch (error) {
       console.error('Failed to connect to the database:', error);
+      throw new DatabaseError('Failed to connect to the database', 500);
     }
   }
 
   async disconnect(): Promise<void> {
     try {
-      if (this.connection) await this.connection.end();
+      if (this.connection) await this.connection.destroy();
       this.connection = null;
     } catch (error) {
       console.error('Failed to disconnect from the database:', error);
+      throw new DatabaseError('Failed to disconnect from the database', 500);
     }
+  }
+
+  getConnection(): Connection {
+    if (!this.connection) throw new DatabaseError('Database is not connected', 500);
+
+    return this.connection;
   }
 
   async executeQuery<T extends RowDataPacket>(query: string, values?: any[]): Promise<T[]>;
@@ -45,7 +53,7 @@ export class MySQLDatabase implements IMySQLDatabase {
     }
 
     try {
-      const isSelectQuery = query.trim().startsWith('SELECT');
+      const isSelectQuery = /^\s*SELECT\s+/i.test(query);
 
       if (isSelectQuery) {
         const [rows] = await this.connection.execute(query, values);
@@ -71,7 +79,8 @@ export class MySQLDatabase implements IMySQLDatabase {
       }
       return false;
     } catch (error) {
-      return false;
+      console.error('Failed to test the database connection:', error);
+      throw new DatabaseError('Failed to test the database connection', 500);
     }
   }
 }

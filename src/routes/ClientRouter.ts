@@ -12,7 +12,7 @@ class ClientRouter extends CrudRouter<TClient> {
     this.router.get('/:id', this.routeController.getById);
     this.router.get('/', this.routeController.getAll);
     this.router.put('/:id', this.routeController.update);
-    this.router.delete('/:id', this.routeController.delete);
+    this.router.delete('/:id', this.routeController.deleteById);
   }
 }
 

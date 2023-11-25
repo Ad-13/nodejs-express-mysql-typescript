@@ -1,8 +1,10 @@
-import { TId, TUser } from "@root/types";
+import { ERoles } from '@root/enums/ERoles';
+import { TId, TUser } from '@root/types';
 
 export class UserDto {
-  email: string;
   id: TId;
+  email: string;
+  roles: ERoles[];
   isActivated: boolean;
 
   constructor(
@@ -11,5 +13,6 @@ export class UserDto {
     this.email = user.email
     this.id = user.id
     this.isActivated = user.isActivated
+    this.roles = user.roles
   }
 }

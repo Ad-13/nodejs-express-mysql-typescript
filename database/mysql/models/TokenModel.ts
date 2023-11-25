@@ -1,7 +1,7 @@
 import { ResultSetHeader } from 'mysql2';
 
 import AbstractCrudModel from './AbstractCrudModel';
-import { ETables } from '../../utils/tables';
+import { ETables } from '@root/enums/ETables';
 import { TToken } from '@root/types';
 
 class TokenModel extends AbstractCrudModel<TToken> {
@@ -61,7 +61,7 @@ class TokenModel extends AbstractCrudModel<TToken> {
     }
   }
 
-  async delete(refreshToken: string): Promise<string> {
+  async deleteToken(refreshToken: string): Promise<string> {
     try {
       const sql = 'DELETE FROM ?? WHERE refreshToken = ?';
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [this.tableName, refreshToken]);

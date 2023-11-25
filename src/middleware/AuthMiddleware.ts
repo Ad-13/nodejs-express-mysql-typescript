@@ -5,6 +5,8 @@ import tokenService from '@app/services/TokenService';
 import { AuthenticatedRequest } from '@app/types';
 
 export const authMiddleware = (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
+  if (req.method === 'OPTIONS') next();
+
   const authorizationHeader = req.headers.authorization;
   if (!authorizationHeader) throw new Errors.UnauthorizedError();
 

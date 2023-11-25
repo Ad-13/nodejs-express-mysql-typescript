@@ -1,5 +1,5 @@
 import AbstractCrudModel from './AbstractCrudModel';
-import { ETables } from '../../utils/tables';
+import { ETables } from '@root/enums/ETables';
 import { TCarPart } from '@root/types';
 
 class CarPartModel extends AbstractCrudModel<TCarPart> {

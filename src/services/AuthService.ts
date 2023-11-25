@@ -7,9 +7,12 @@ import tokenService from './TokenService';
 
 import * as Errors from '@app/errors';
 
-import { UserDto } from '@app/dtos/UserDto';
+import { ERoles } from '@root/enums/ERoles';
 import userModel from '@root/database/mysql/models/UserModel';
+import { UserDto } from '@app/dtos/UserDto';
 import { TUserLoginData } from '@app/types';
+
+const saltRounds = 3;
 
 class AuthService {
   private readonly secretKey = process.env.AUTH_SECRET_KEY as string;
@@ -21,10 +24,10 @@ class AuthService {
       throw new Errors.BadRequestError({ message: `User with specified email already registered` });
     }
 
-    const hashPassword = await bcrypt.hash(password, 3);
+    const hashPassword = await bcrypt.hash(password, saltRounds);
     const activationLink = uuid.v4();
 
-    const user = await userModel.create({ email, password: hashPassword, activationLink });
+    const user = await userModel.create({ email, password: hashPassword, activationLink, roles: [ERoles.Client]});
     await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
 
     const userDto = new UserDto(user);
