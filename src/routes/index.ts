@@ -7,7 +7,6 @@ import { ERoles } from '@root/enums/ERoles';
 
 import authRouter from '@app/routes/AuthRouter';
 import userRouter from '@app/routes/UserRouter';
-import roleRouter from '@app/routes/RoleRouter';
 import sellerRouter from '@app/routes/SellerRouter';
 import clientRouter from '@app/routes/ClientRouter';
 import carRouter from '@app/routes/CarRouter';
@@ -17,7 +16,6 @@ export default class Routes {
   constructor(app: Application) {
     app.use('/api/auth', authRouter);
     app.use('/api/users', authMiddleware, roleMiddleware([ERoles.Client]), userRouter);
-    app.use('/api/roles', authMiddleware, roleRouter);
     app.use('/api/sellers', sellerRouter);
     app.use('/api/clients', clientRouter);
     app.use('/api/cars', carRouter);

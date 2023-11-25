@@ -3,7 +3,9 @@ import cors, { CorsOptions } from 'cors';
 import 'express-async-errors';
 import path from 'path';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
 
+import swaggerSpec from './swagger';
 import Routes from './routes';
 import { createDatabaseInstance } from '@root/database/utils/createDatabaseInstance';
 import { errorMiddleware } from './middleware/ErrorMiddleware';
@@ -12,7 +14,12 @@ export default class Server {
   constructor(app: Application) {
     this.config(app);
     this.syncDatabase();
+    this.setupSwagger(app);
     new Routes(app);
+  }
+
+  private setupSwagger(app: Application): void {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   }
 
   private config(app: Application): void {
