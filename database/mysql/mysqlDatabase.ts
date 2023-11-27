@@ -75,6 +75,7 @@ export class MySQLDatabase implements IMySQLDatabase {
     try {
       const [rows] = await this.connection.execute<RowDataPacket[]>('SELECT 1');
       if (rows.length === 1 && rows[0][1] === 1) {
+        console.log('Connection to the database established successfully.');
         return true;
       }
       return false;
@@ -84,55 +85,3 @@ export class MySQLDatabase implements IMySQLDatabase {
     }
   }
 }
-
-// async queryRows(query: string, values: any[]): Promise<RowDataPacket[]> {
-//   if (!this.connection) {
-//     throw new Error('Database is not connected');
-//   }
-
-//   try {
-//     const [rows] = await this.connection.execute<RowDataPacket[]>(query, values);
-//     return rows;
-//   } catch (error) {
-//     throw new Error('Failed to queryRows');
-//   }
-// }
-
-// async queryRowsAsArray(query: string, values: any[]): Promise<RowDataPacket[][]> {
-//   if (!this.connection) {
-//     throw new Error('Database is not connected');
-//   }
-
-//   try {
-//     const [rows] = await this.connection.execute<RowDataPacket[][]>(query, values);
-//     return rows;
-//   } catch (error) {
-//     throw new Error('Failed to queryRows');
-//   }
-// }
-
-// async queryResult(query: string, values: any[]): Promise<ResultSetHeader> {
-//   if (!this.connection) {
-//     throw new Error('Database is not connected');
-//   }
-
-//   try {
-//     const [rows] = await this.connection.execute<ResultSetHeader>(query, values);
-//     return rows;
-//   } catch (error) {
-//     throw new Error('Failed to queryRows');
-//   }
-// }
-
-// async queryResults(query: string, values: any[]): Promise<ResultSetHeader[]> {
-//   if (!this.connection) {
-//     throw new Error('Database is not connected');
-//   }
-
-//   try {
-//     const [rows] = await this.connection.execute<ResultSetHeader[]>(query, values);
-//     return rows;
-//   } catch (error) {
-//     throw new Error('Failed to queryRows');
-//   }
-// }

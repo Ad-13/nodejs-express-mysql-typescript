@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2021",
     "types": [
-      "swagger-jsdoc",
       "swagger-ui-express"
     ],
     "module": "CommonJS",

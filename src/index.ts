@@ -38,12 +38,7 @@ export default class Server {
   private async syncDatabase(): Promise<void> {
     const db = createDatabaseInstance(process.env.DB_TYPE);
     await db.connect();
-    const isConnected = await db.testConnection();
-    console.log(
-      isConnected
-        ? 'Connection to the database established successfully.'
-        : 'Connection to the database established successfully.',
-    );
+    await db.testConnection();
   }
 
   public start(app: Application, port: number): void {

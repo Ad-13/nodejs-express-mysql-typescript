@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import logger from '@root/logger';
 
 import { CustomError } from "@app/errors/CustomError";
 
-export const errorMiddleware = (err: Error, _req: Request, res: Response) => {
+export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if(err instanceof CustomError) {
     const { statusCode, errors, logging } = err;
 
@@ -17,7 +17,15 @@ export const errorMiddleware = (err: Error, _req: Request, res: Response) => {
 
     return res.status(statusCode).send({ errors });
   }
+  
+  if (err.message === 'Converting circular structure to JSON') {
+    return res.status(500).send({ errors: [{ message: "Circular structure error" }] });
+  }
 
-  console.error(JSON.stringify(err, null, 2));
+  console.error(JSON.stringify({
+    message: err.message,
+    stack: err.stack,
+  }, null, 2));
+
   return res.status(500).send({ errors: [{ message: "Something went wrong" }] });
 };
