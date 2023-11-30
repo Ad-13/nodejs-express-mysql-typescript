@@ -18,7 +18,7 @@ class AuthService {
   private readonly secretKey = process.env.AUTH_SECRET_KEY as string;
   private readonly expiresIn = process.env.JWT_ACCESS_EXPIRES as string;
 
-  async registrate(email: string, password: string): Promise<TUserLoginData> {
+  async registrate(email: string, password: string, sendMail?: boolean): Promise<TUserLoginData> {
     const candidate = await userModel.read({ email });
     if (candidate.length) {
       throw new Errors.BadRequestError({ message: `User with specified email already registered` });
@@ -28,7 +28,10 @@ class AuthService {
     const activationLink = uuid.v4();
 
     const user = await userModel.create({ email, password: hashPassword, activationLink, roles: [ERoles.Client]});
-    await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+
+    if (sendMail) {
+      await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+    }
 
     const userDto = new UserDto(user);
     const tokens = tokenService.generateTokens({ ...userDto });
