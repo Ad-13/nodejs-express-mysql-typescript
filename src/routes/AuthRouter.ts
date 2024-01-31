@@ -1,7 +1,8 @@
 import { body } from 'express-validator';
 
+import AuthController from '@controllers/AuthController';
+
 import BaseRouter from './BaseRouter';
-import AuthController from '@app/controllers/AuthController';
 
 class AuthRouter extends BaseRouter<AuthController> {
   constructor() {

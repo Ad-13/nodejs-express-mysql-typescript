@@ -8,7 +8,12 @@ export default class BaseError extends CustomError {
   constructor(
     defaultMessage: string,
     defaultStatusCode: number,
-    params?: { code?: number; message?: string; logging?: boolean; context?: { [key: string]: any } },
+    params?: {
+      code?: number;
+      message?: string;
+      logging?: boolean;
+      context?: { [key: string]: any };
+    },
   ) {
     const { code, message, logging } = params || {};
 

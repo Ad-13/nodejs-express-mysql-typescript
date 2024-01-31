@@ -4,14 +4,20 @@
     "types": [
       "swagger-ui-express"
     ],
-    "module": "CommonJS",
+    "module": "NodeNext",
     "outDir": "./dist",
-    "rootDir": ".",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
-      "@app/*": ["src/*"],
-      "@root/*": ["*"],
-      "@db/*": ["./database/mysql/*"]
+      "@controllers/*": ["controllers/*"],
+      "@db/*": ["database/*"],
+      "@dtos/*": ["dtos/*"],
+      "@errors/*": ["errors/*"],
+      "@enums/*": ["helpers/enums/*"],
+      "@helpersTypes/*": ["helpers/types/*"],
+      "@utils/*": ["helpers/utils/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
     },
     "strict": true,
     "esModuleInterop": true,

@@ -1,9 +1,16 @@
-import UserModel from '@db/models/UserModel';
-import { TUser } from '@root/types';
+import UserService from '@services/UserService';
+
+import { TUser, TInputCreateUser, TInputUpdateUser, TOutputUser } from '@helpersTypes/user';
+
 import AbstractCrudController from './AbstractCrudController';
 
-class UserController extends AbstractCrudController<TUser> {
-  protected model = UserModel;
+class UserController extends AbstractCrudController<
+  TUser,
+  TInputCreateUser,
+  TInputUpdateUser,
+  TOutputUser
+> {
+  protected service = UserService;
 }
 
 export default UserController;

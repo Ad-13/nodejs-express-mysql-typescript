@@ -1,4 +1,4 @@
-import { CustomErrorContent } from "@app/types";
+import { CustomErrorContent } from '@helpersTypes/error';
 
 export abstract class CustomError extends Error {
   abstract readonly statusCode: number;
@@ -7,9 +7,6 @@ export abstract class CustomError extends Error {
 
   constructor(message: string) {
     super(message);
-
-    // Only because we are extending a built in class
     Object.setPrototypeOf(this, CustomError.prototype);
-    Error.captureStackTrace(this, this.constructor);
   }
 }

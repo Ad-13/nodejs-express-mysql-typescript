@@ -1,5 +1,5 @@
-import usersApiSpec from './usersApiSpec'
-import authApiSpec from './authApiSpec'
+import usersApiSpec from './usersApiSpec';
+import authApiSpec from './authApiSpec';
 
 export default {
   openapi: '3.0.0',

@@ -1,24 +1,18 @@
 import { Application } from 'express';
 
-import { authMiddleware } from '@app/middleware/AuthMiddleware';
-import { roleMiddleware } from '@app/middleware/RoleMiddleware';
+import { authMiddleware } from '@middlewares/AuthMiddleware';
+import { roleMiddleware } from '@middlewares/RoleMiddleware';
 
-import { ERoles } from '@root/enums/ERoles';
+import authRouter from '@routes/AuthRouter';
+import userRouter from '@routes/UserRouter';
+import carRouter from '@routes/CarRouter';
 
-import authRouter from '@app/routes/AuthRouter';
-import userRouter from '@app/routes/UserRouter';
-import sellerRouter from '@app/routes/SellerRouter';
-import clientRouter from '@app/routes/ClientRouter';
-import carRouter from '@app/routes/CarRouter';
-import carPartRouter from '@app/routes/CarPartRouter';
+import { ERoles } from '@enums/ERoles';
 
 export default class Routes {
   constructor(app: Application) {
     app.use('/api/auth', authRouter);
     app.use('/api/users', authMiddleware, roleMiddleware([ERoles.Client]), userRouter);
-    app.use('/api/sellers', sellerRouter);
-    app.use('/api/clients', clientRouter);
-    app.use('/api/cars', carRouter);
-    app.use('/api/car-parts', carPartRouter);
+    app.use('/api/cars', authMiddleware, roleMiddleware([ERoles.Client]), carRouter);
   }
 }

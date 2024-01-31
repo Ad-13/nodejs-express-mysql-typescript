@@ -1,8 +1,10 @@
-import CrudRouter from './CrudRouter';
-import CarController from '../controllers/CarController';
-import { TCar } from '@root/types';
+import CarController from '@controllers/CarController';
 
-class CarRouter extends CrudRouter<TCar> {
+import { TCar, TInputCreateCar, TInputUpdateCar, TOutputCar } from '@helpersTypes/car';
+
+import CrudRouter from './CrudRouter';
+
+class CarRouter extends CrudRouter<TCar, TInputCreateCar, TInputUpdateCar, TOutputCar> {
   constructor() {
     super(CarController);
   }

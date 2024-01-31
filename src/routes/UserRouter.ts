@@ -1,8 +1,10 @@
-import CrudRouter from './CrudRouter';
-import UserController from '../controllers/UserController';
-import { TUser } from '@root/types';
+import UserController from '@controllers/UserController';
 
-class UserRouter extends CrudRouter<TUser> {
+import { TUser, TInputCreateUser, TInputUpdateUser, TOutputUser } from '@helpersTypes/user';
+
+import CrudRouter from './CrudRouter';
+
+class UserRouter extends CrudRouter<TUser, TInputCreateUser, TInputUpdateUser, TOutputUser> {
   constructor() {
     super(UserController);
   }

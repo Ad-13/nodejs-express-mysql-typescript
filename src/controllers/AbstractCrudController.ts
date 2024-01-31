@@ -1,66 +1,64 @@
-import { Request, Response } from 'express';
+import { TCrudController, TCrudService } from '@helpersTypes/crud';
+import { TRequest, TRequestWithParams, TResponse } from '@helpersTypes/expressTypes';
+import { TId, TIdParams } from '@helpersTypes/id';
 
-import { TId, TCrudModel } from '@root/types';
-import { TCrudController, TIdParams } from '@app/types';
-import * as Errors from '@app/errors';
+abstract class AbstractCrudController<TGeneralModel, TInputCreate, TInputUpdate, TOutput>
+  implements TCrudController<TGeneralModel, TInputCreate, TInputUpdate, TOutput>
+{
+  protected abstract service: TCrudService<TGeneralModel, TInputCreate, TInputUpdate, TOutput>;
 
-abstract class AbstractCrudController<T> implements TCrudController<T> {
-  protected abstract model: TCrudModel<T>;
-  
-  protected validateCreateData(req: Request<{}, {}, Partial<T>>): void {}
-  protected validateUpdateData(req: Request<{}, {}, Partial<T>>): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected validateCreateData(req: TRequest<TInputCreate>): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected validateUpdateData(req: TRequest<TInputUpdate>): void {}
 
-  async create(req: Request<{}, {}, Partial<T>>, res: Response<Partial<T>>): Promise<void> {
+  public create = async (req: TRequest<TInputCreate>, res: TResponse<TOutput>): Promise<void> => {
     this.validateCreateData?.(req);
 
     const data = req.body;
+    const result = await this.service.create(data);
 
-    const result = await this.model.create(data);
     res.status(201).json(result);
-  }
+  };
 
-  async getById(req: Request<TIdParams>, res: Response<Partial<T>>): Promise<void> {
+  public getById = async (
+    req: TRequestWithParams<TIdParams>,
+    res: TResponse<TOutput>,
+  ): Promise<void> => {
     const id = req.params.id;
-    const result = await this.model.readById(id);
-
-    if (!result) {
-      throw new Errors.NotFoundError();
-    }
+    const result = await this.service.getById(id);
 
     res.status(200).json(result);
-  }
+  };
 
-  async getAll(_req: Request, res: Response<Partial<T>[]>): Promise<void> {
-    const result = await this.model.read({});
+  public getAll = async (_req: TRequest, res: TResponse<TOutput[]>): Promise<void> => {
+    const result = await this.service.getAll({});
+
     res.status(200).json(result);
-  }
+  };
 
-  async update(req: Request<TIdParams, {}, Partial<T>>, res: Response<Partial<T>>): Promise<void> {
+  public update = async (
+    req: TRequest<TInputUpdate, TIdParams>,
+    res: TResponse<TOutput>,
+  ): Promise<void> => {
     this.validateUpdateData?.(req);
 
     const id = req.params.id;
     const data = req.body;
+    const result = await this.service.update({ ...data, id });
 
-    // TODO: check permissions
-    if (false) {
-      throw new Errors.ForbiddenError();
-    }
-
-    const result = await this.model.update({ ...data, id });
     res.status(200).json(result);
-  }
+  };
 
-  async deleteById(req: Request<TIdParams>, res: Response<TId>): Promise<void> {
+  public deleteById = async (
+    req: TRequestWithParams<TIdParams>,
+    res: TResponse<TId>,
+  ): Promise<void> => {
     const { id } = req.params;
+    const result = await this.service.deleteById(id);
 
-    // TODO: check permissions
-    if (false) {
-      throw new Errors.ForbiddenError();
-    }
-
-    const result = await this.model.deleteById(id);
     res.status(200).json(result);
-  }
+  };
 }
 
 export default AbstractCrudController;

@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-import tokenModel from '@db/models/TokenModel';
-import { TToken } from '@root/types';
-import { TTokens } from '@app/types';
-import { UserDto } from '@app/dtos/UserDto';
+import tokenModel from '@db/mysql/models/TokenModel';
+
+import { TOutputUser } from '@helpersTypes/user';
+import { TTokens, TToken, TInputUpdateToken, TInputCreateToken } from '@helpersTypes/token';
+import { TId } from '@helpersTypes/id';
 
 class TokenService {
   generateTokens(payload: string | Buffer | object): TTokens {
@@ -20,29 +21,36 @@ class TokenService {
     };
   }
 
-  validateAccessToken(token: string): UserDto {
+  validateAccessToken(token: string): TOutputUser {
     const userData = jwt.verify(token, String(process.env.JWT_ACCESS_SECRET));
-    return userData as UserDto;
+    return userData as TOutputUser;
   }
 
-  validateRefreshToken(token: string): UserDto {
+  validateRefreshToken(token: string): TOutputUser {
     const userData = jwt.verify(token, String(process.env.JWT_REFRESH_SECRET));
-    return userData as UserDto;
+    return userData as TOutputUser;
   }
 
   // TODO: do not forget to use Kubernetes to delete expired tokens
-  async saveToken(data: Partial<TToken>): Promise<Partial<TToken>> {
-    const tokenData = await tokenModel.read({ refreshToken: data.refreshToken });
-    const action = tokenData ? tokenModel.update : tokenModel.create;
-    return action(data);
+  async saveToken(data: TInputCreateToken): Promise<TId> {
+    return tokenModel.create(data);
   }
 
-  async removeToken(refreshToken: string): Promise<string> {
+  async updateToken(data: TInputUpdateToken): Promise<TId> {
+    return tokenModel.update(data);
+  }
+
+  async removeToken(refreshToken: string): Promise<void> {
     return tokenModel.deleteToken(refreshToken);
   }
 
-  async findToken(refreshToken: string): Promise<Partial<TToken>> {
-    const tokenData = await tokenModel.read({ refreshToken });
+  async findToken(refreshToken: string): Promise<TToken> {
+    const tokenData = await tokenModel.read<TToken>({ refreshToken }, [
+      'id',
+      'refreshToken',
+      'expiresAt',
+      'userId',
+    ]);
     return tokenData[0];
   }
 }

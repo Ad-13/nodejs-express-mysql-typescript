@@ -1,6 +1,9 @@
-import BaseRouter from './BaseRouter';
-import AbstractCrudController from '@app/controllers/AbstractCrudController';
+import AbstractCrudController from '@controllers/AbstractCrudController';
 
-abstract class CrudRouter<T> extends BaseRouter<AbstractCrudController<T>> {}
+import BaseRouter from './BaseRouter';
+
+abstract class CrudRouter<TGeneralModel, TInputCreate, TInputUpdate, TOutput> extends BaseRouter<
+  AbstractCrudController<TGeneralModel, TInputCreate, TInputUpdate, TOutput>
+> {}
 
 export default CrudRouter;

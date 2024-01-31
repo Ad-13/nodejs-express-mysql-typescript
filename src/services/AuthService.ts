@@ -1,16 +1,18 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import uuid from 'uuid';
+import { v4 } from 'uuid';
 
-import mailService from './MailService';
+import userModel from '@db/mysql/models/UserModel';
+
+import * as Errors from '@errors/index';
+
+import { ERoles } from '@enums/ERoles';
+import { TOutputUser, TUser } from '@helpersTypes/user';
+import { TTokens } from '@helpersTypes/token';
+import { TInputRegistrate } from '@helpersTypes/authController';
+
 import tokenService from './TokenService';
-
-import * as Errors from '@app/errors';
-
-import { ERoles } from '@root/enums/ERoles';
-import userModel from '@root/database/mysql/models/UserModel';
-import { UserDto } from '@app/dtos/UserDto';
-import { TUserLoginData } from '@app/types';
+import mailService from './MailService';
 
 const saltRounds = 3;
 
@@ -18,67 +20,88 @@ class AuthService {
   private readonly secretKey = process.env.AUTH_SECRET_KEY as string;
   private readonly expiresIn = process.env.JWT_ACCESS_EXPIRES as string;
 
-  async registrate(email: string, password: string, sendMail?: boolean): Promise<TUserLoginData> {
-    const candidate = await userModel.read({ email });
+  async registrate({ email, password, name, telephone }: TInputRegistrate): Promise<TTokens> {
+    const candidate = await userModel.read({ email }, ['email']);
     if (candidate.length) {
-      throw new Errors.BadRequestError({ message: `User with specified email already registered` });
+      throw new Errors.BadRequestError({ message: 'User with specified email already registered' });
     }
 
     const hashPassword = await bcrypt.hash(password, saltRounds);
-    const activationLink = uuid.v4();
+    const activationLink = v4();
+    const userId = await userModel.create({
+      email,
+      password: hashPassword,
+      name,
+      telephone,
+      activationLink,
+      roles: [ERoles.Client],
+    });
+    const user = await userModel.readById<TOutputUser>(userId, [
+      'id',
+      'name',
+      'email',
+      'roles',
+      'isActivated',
+    ]);
+    const tokens = tokenService.generateTokens(user);
 
-    const user = await userModel.create({ email, password: hashPassword, activationLink, roles: [ERoles.Client]});
+    await tokenService.saveToken({ userId: user.id, refreshToken: tokens.refreshToken });
+    await mailService.sendActivationMail(
+      email,
+      `${process.env.SERVER_URL}/api/activate/${activationLink}`,
+    );
 
-    if (sendMail) {
-      await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+    return { ...tokens };
+  }
+
+  async login(email: string, password: string): Promise<TTokens> {
+    const { password: userPassword, ...user } = (
+      await userModel.read<TUser>({ email }, [
+        'id',
+        'name',
+        'email',
+        'roles',
+        'isActivated',
+        'password',
+      ])
+    )[0];
+    if (!user) {
+      throw new Errors.NotFoundError({ message: 'User not found' });
     }
 
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-    await tokenService.saveToken({ id: userDto.id, refreshToken: tokens.refreshToken });
+    const isPassEquals = await bcrypt.compare(password, userPassword);
+    if (!isPassEquals) {
+      throw new Errors.BadRequestError({ message: 'Wrong password' });
+    }
 
-    return { ...tokens, user: userDto };
+    const tokens = tokenService.generateTokens(user);
+
+    await tokenService.saveToken({ userId: user.id, refreshToken: tokens.refreshToken });
+
+    return { ...tokens };
+  }
+
+  async logout(refreshToken: string): Promise<void> {
+    tokenService.removeToken(refreshToken);
   }
 
   async activate(activationLink: string): Promise<void> {
-    const user = (await userModel.read({ activationLink }))[0];
+    const user = (
+      await userModel.read<Pick<TUser, 'id' | 'isActivated'>>({ activationLink }, [
+        'id',
+        'isActivated',
+      ])
+    )[0];
 
     if (!user) {
-      throw new Errors.BadRequestError({ message: `Wrong activation link` });
+      throw new Errors.BadRequestError({ message: 'Wrong activation link' });
     }
 
     user.isActivated = true;
     await userModel.update(user);
   }
 
-  async login(email: string, password: string): Promise<TUserLoginData> {
-    const user = (await userModel.read({ email }))[0];
-    if (!user) {
-      throw new Errors.BadRequestError({ message: 'User not found' });
-    }
-
-    const isPassEquals = await bcrypt.compare(password, user.password!);
-    if (!isPassEquals) {
-      throw new Errors.BadRequestError({ message: 'Wrong password' });
-    }
-
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
-
-    await tokenService.saveToken({
-      id: userDto.id,
-      refreshToken: tokens.refreshToken,
-    });
-
-    return { ...tokens, user: userDto };
-  }
-
-  async logout(refreshToken: string): Promise<string> {
-    const token = await tokenService.removeToken(refreshToken);
-    return token;
-  }
-
-  async refresh(refreshToken: string): Promise<TUserLoginData> {
+  async refresh(refreshToken: string): Promise<TTokens> {
     if (!refreshToken) throw new Errors.UnauthorizedError();
 
     const userData = tokenService.validateRefreshToken(refreshToken);
@@ -86,15 +109,18 @@ class AuthService {
 
     if (!userData || !tokenFromDb) throw new Errors.UnauthorizedError();
 
-    const user = await userModel.readById(userData.id);
-    const userDto = new UserDto(user);
-    const tokens = tokenService.generateTokens({ ...userDto });
+    const user = await userModel.readById<TOutputUser>(userData.id, [
+      'id',
+      'name',
+      'email',
+      'roles',
+      'isActivated',
+    ]);
+    const tokens = tokenService.generateTokens(user);
 
-    await tokenService.saveToken({
-      id: userDto.id,
-      refreshToken: tokens.refreshToken,
-    });
-    return { ...tokens, user: userDto };
+    await tokenService.updateToken({ id: tokenFromDb.id, refreshToken: tokens.refreshToken });
+
+    return { ...tokens };
   }
 
   async generateToken(payload: object): Promise<string> {
