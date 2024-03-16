@@ -48,26 +48,27 @@ class AuthService {
     await tokenService.saveToken({ userId: user.id, refreshToken: tokens.refreshToken });
     await mailService.sendActivationMail(
       email,
-      `${process.env.SERVER_URL}/api/activate/${activationLink}`,
+      `${process.env.SERVER_URL}/api/auth/activate/${activationLink}`,
     );
 
     return { ...tokens };
   }
 
   async login(email: string, password: string): Promise<TTokens> {
-    const { password: userPassword, ...user } = (
-      await userModel.read<TUser>({ email }, [
-        'id',
-        'name',
-        'email',
-        'roles',
-        'isActivated',
-        'password',
-      ])
-    )[0];
-    if (!user) {
+    const response = await userModel.read<TUser>({ email }, [
+      'id',
+      'name',
+      'email',
+      'roles',
+      'isActivated',
+      'password',
+    ]);
+
+    if (!response[0]) {
       throw new Errors.NotFoundError({ message: 'User not found' });
     }
+
+    const { password: userPassword, ...user } = response[0];
 
     const isPassEquals = await bcrypt.compare(password, userPassword);
     if (!isPassEquals) {
@@ -82,7 +83,7 @@ class AuthService {
   }
 
   async logout(refreshToken: string): Promise<void> {
-    tokenService.removeToken(refreshToken);
+    return await tokenService.removeToken(refreshToken);
   }
 
   async activate(activationLink: string): Promise<void> {

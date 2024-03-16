@@ -63,7 +63,7 @@ class AuthController implements TAuthController {
   async logout(req: TRequest, res: TResponse): Promise<void> {
     const { refreshToken } = req.cookies;
 
-    await authService.logout(refreshToken);
+    if (refreshToken) await authService.logout(refreshToken);
 
     res.clearCookie('refreshToken');
     res.json('ok');

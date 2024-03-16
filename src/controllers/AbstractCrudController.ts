@@ -8,12 +8,12 @@ abstract class AbstractCrudController<TGeneralModel, TInputCreate, TInputUpdate,
   protected abstract service: TCrudService<TGeneralModel, TInputCreate, TInputUpdate, TOutput>;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected validateCreateData(req: TRequest<TInputCreate>): void {}
+  protected async validateCreateData(req: TRequest<TInputCreate>): Promise<void> {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected validateUpdateData(req: TRequest<TInputUpdate>): void {}
+  protected async validateUpdateData(req: TRequest<TInputUpdate>): Promise<void> {}
 
   public create = async (req: TRequest<TInputCreate>, res: TResponse<TOutput>): Promise<void> => {
-    this.validateCreateData?.(req);
+    await this.validateCreateData?.(req);
 
     const data = req.body;
     const result = await this.service.create(data);

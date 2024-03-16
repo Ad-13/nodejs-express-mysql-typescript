@@ -20,8 +20,10 @@ abstract class AbstractCrudModel<
     this.mysqlDB = MySQLDatabase.getInstance();
   }
 
-  protected throwDatabaseError(message: string, status: number): never {
-    throw new DatabaseError(message, status);
+  protected throwDatabaseError(message: string, status: number): any {
+    // throw new DatabaseError(message, status);
+    // return new DatabaseError(message, status);
+    return Promise.reject(new DatabaseError(message, status));
   }
 
   async create(data: TInputCreate): Promise<TId> {
@@ -35,7 +37,7 @@ abstract class AbstractCrudModel<
 
       return result.insertId;
     } catch (error) {
-      this.throwDatabaseError(`Failed to create ${this.tableName}.\n${error}`, 500);
+      return this.throwDatabaseError(`Failed to create ${this.tableName}.\n${error}`, 500);
     }
   }
 
@@ -45,11 +47,11 @@ abstract class AbstractCrudModel<
     try {
       const result = await this.mysqlDB.executeQuery<T & RowDataPacket>(sql, [id]);
 
-      if (!result.length) this.throwDatabaseError('Not found', 404);
+      if (!result.length) return this.throwDatabaseError('Not found', 404);
 
       return result[0];
     } catch (error) {
-      this.throwDatabaseError(`Failed to get by Id.\n${error}`, 500);
+      return this.throwDatabaseError(`Failed to get by Id.\n${error}`, 500);
     }
   }
 
@@ -69,7 +71,7 @@ abstract class AbstractCrudModel<
 
       return result;
     } catch (error) {
-      this.throwDatabaseError(`Failed to find in ${this.tableName}.\n${error}`, 500);
+      return this.throwDatabaseError(`Failed to find in ${this.tableName}.\n${error}`, 500);
     }
   }
 
@@ -86,25 +88,25 @@ abstract class AbstractCrudModel<
         id,
       ]);
 
-      if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
+      if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
 
       return id as TId;
     } catch (error) {
-      this.throwDatabaseError(`Failed to update ${this.tableName}.\n${error}`, 500);
+      return this.throwDatabaseError(`Failed to update ${this.tableName}.\n${error}`, 500);
     }
   }
 
   async deleteById(id: TId): Promise<TId> {
-    if (!id) this.throwDatabaseError('Id not set', 404);
+    if (!id) return this.throwDatabaseError('Id not set', 404);
 
     const sql = `DELETE FROM ${this.tableName} WHERE id = ?`;
 
     try {
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [id]);
 
-      if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
+      if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
     } catch (error) {
-      this.throwDatabaseError(`Failed to delete.\n${error}`, 500);
+      return this.throwDatabaseError(`Failed to delete.\n${error}`, 500);
     }
 
     return id;

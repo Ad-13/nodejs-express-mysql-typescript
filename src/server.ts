@@ -17,20 +17,14 @@ import swaggerSpec from './swagger';
 
 export default class Server {
   constructor(app: Application) {
-    this.config(app);
     this.syncDatabase();
-    this.setupSwagger(app);
-    new Routes(app);
-  }
-
-  private setupSwagger(app: Application): void {
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    this.config(app);
   }
 
   private config(app: Application): void {
     const corsOptions: CorsOptions = {
-      origin: process.env.CLIENT_URL,
       credentials: true,
+      origin: process.env.CLIENT_URL,
     };
 
     app.use(cors(corsOptions));
@@ -39,6 +33,8 @@ export default class Server {
     app.use(cookieParser());
     app.use(express.static(path.resolve(__dirname, 'static')));
     app.use(express.urlencoded({ extended: true }));
+    new Routes(app);
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     app.use(errorMiddleware);
   }
 

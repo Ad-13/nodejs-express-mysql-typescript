@@ -15,9 +15,7 @@ export const authMiddleware = (req: TRequest, _res: Response, next: NextFunction
   const accessToken = authorizationHeader.split(' ')[1];
   if (!accessToken) throw new Errors.UnauthorizedError();
 
-  const userData = tokenService.validateAccessToken(accessToken);
-  if (!userData) throw new Errors.UnauthorizedError();
+  req.user = tokenService.validateAccessToken(accessToken);
 
-  req.user = userData;
   next();
 };

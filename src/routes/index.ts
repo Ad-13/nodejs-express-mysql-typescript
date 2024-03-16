@@ -13,6 +13,6 @@ export default class Routes {
   constructor(app: Application) {
     app.use('/api/auth', authRouter);
     app.use('/api/users', authMiddleware, roleMiddleware([ERoles.Client]), userRouter);
-    app.use('/api/cars', authMiddleware, roleMiddleware([ERoles.Client]), carRouter);
+    app.use('/api/cars', carRouter);
   }
 }

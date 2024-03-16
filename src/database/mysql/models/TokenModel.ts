@@ -28,7 +28,7 @@ class TokenModel extends AbstractCrudModel<TToken, TInputCreateToken, TInputUpda
 
       return result.insertId;
     } catch (error) {
-      this.throwDatabaseError(`Failed to create ${this.tableName}`, 500);
+      return this.throwDatabaseError(`Failed to create ${this.tableName}`, 500);
     }
   };
 
@@ -37,7 +37,7 @@ class TokenModel extends AbstractCrudModel<TToken, TInputCreateToken, TInputUpda
       const { refreshToken, id } = data;
 
       if (!id) {
-        this.throwDatabaseError('Invalid data: id is missing', 400);
+        return this.throwDatabaseError('Invalid data: id is missing', 400);
       }
 
       const expiresAt = new Date();
@@ -52,11 +52,11 @@ class TokenModel extends AbstractCrudModel<TToken, TInputCreateToken, TInputUpda
         id,
       ]);
 
-      if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
+      if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
 
       return result.insertId;
     } catch (error) {
-      this.throwDatabaseError(`Failed to update ${this.tableName}`, 500);
+      return this.throwDatabaseError(`Failed to update ${this.tableName}`, 500);
     }
   };
 
@@ -65,9 +65,9 @@ class TokenModel extends AbstractCrudModel<TToken, TInputCreateToken, TInputUpda
       const sql = `DELETE FROM ${this.tableName} WHERE refreshToken = ?`;
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [refreshToken]);
 
-      if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
+      if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
     } catch (error) {
-      this.throwDatabaseError(`Failed to delete: ${refreshToken}`, 500);
+      return this.throwDatabaseError('Failed to delete token', 500);
     }
   };
 
@@ -77,7 +77,7 @@ class TokenModel extends AbstractCrudModel<TToken, TInputCreateToken, TInputUpda
       const sql = `DELETE FROM ${this.tableName} WHERE expiresAt < ?`;
       await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [currentDate]);
     } catch (error) {
-      this.throwDatabaseError('Failed to delete expired tokens', 500);
+      return this.throwDatabaseError('Failed to delete expired tokens', 500);
     }
   };
 }

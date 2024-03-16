@@ -40,7 +40,10 @@ class UserModel extends AbstractCrudModel<TUser, TInputCreateUser, TInputUpdateU
       return result.insertId;
     } catch (error) {
       await pool.query(EDbTransactions.Rollback);
-      this.throwDatabaseError(`Create user transaction failed: ${(error as Error).message}`, 500);
+      return this.throwDatabaseError(
+        `Create user transaction failed: ${(error as Error).message}`,
+        500,
+      );
     }
   }
 
@@ -62,7 +65,7 @@ class UserModel extends AbstractCrudModel<TUser, TInputCreateUser, TInputUpdateU
         id,
       ]);
 
-      if (!result.affectedRows) this.throwDatabaseError('Not found', 404);
+      if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
 
       const rolesToRemove = currentRoles.roles.filter(role => !updatedData.roles?.includes(role));
       const rolesToCreate =
@@ -94,7 +97,7 @@ class UserModel extends AbstractCrudModel<TUser, TInputCreateUser, TInputUpdateU
       return id as TId;
     } catch (error) {
       await pool.query(EDbTransactions.Rollback);
-      this.throwDatabaseError(`Failed to update ${this.tableName}.\n${error}`, 500);
+      return this.throwDatabaseError(`Failed to update ${this.tableName}.\n${error}`, 500);
     }
   }
 }
