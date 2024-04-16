@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import 'express-async-errors';
+import fileUpload from 'express-fileupload';
 import cors, { CorsOptions } from 'cors';
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -32,6 +33,7 @@ export default class Server {
     app.use(express.json());
     app.use(cookieParser());
     app.use(express.static(path.resolve(__dirname, 'static')));
+    app.use(fileUpload({}));
     app.use(express.urlencoded({ extended: true }));
     new Routes(app);
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

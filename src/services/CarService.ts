@@ -6,7 +6,16 @@ import AbstractCrudService from './AbstractCrudService';
 
 class CarService extends AbstractCrudService<TCar, TInputCreateCar, TInputUpdateCar, TOutputCar> {
   protected model = CarModel;
-  protected selectColumns: (keyof TCar)[] = ['id', 'make', 'model', 'year'];
+  protected selectColumns: (keyof TCar)[] = [
+    'id',
+    'make',
+    'model',
+    'year',
+    'images',
+    'info',
+    'price',
+    'quantity',
+  ];
 }
 
 export default new CarService();

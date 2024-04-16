@@ -11,6 +11,10 @@ exports.up = async function (knex) {
       table.string('make', 255).notNullable();
       table.string('model', 255).notNullable();
       table.integer('year').notNullable();
+      table.integer('price').notNullable();
+      table.json('images').notNullable();
+      table.text('info').nullable();
+      table.integer('quantity', 255).notNullable().defaultTo(0);
     });
   }
 };

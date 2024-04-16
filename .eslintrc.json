@@ -38,7 +38,8 @@
             "/cors/",
             "/path/",
             "/cookie-parser/",
-            "/swagger-ui-express/"
+            "/swagger-ui-express/",
+            "/fs/"
           ],
           "/@db/",
           "/@controllers/",
