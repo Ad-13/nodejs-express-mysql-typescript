@@ -1,16 +1,16 @@
-import CarController from '@controllers/CarController';
+import TireController from '@controllers/TireController';
 
 import { authMiddleware } from '@middlewares/AuthMiddleware';
 import { roleMiddleware } from '@middlewares/RoleMiddleware';
 
-import { TCar, TInputCreateCar, TInputUpdateCar, TOutputCar } from '@helpersTypes/car';
+import { TTire, TInputCreateTire, TInputUpdateTire, TOutputTire } from '@helpersTypes/tire';
 import { ERoles } from '@enums/ERoles';
 
 import CrudRouter from './CrudRouter';
 
-class CarRouter extends CrudRouter<TCar, TInputCreateCar, TInputUpdateCar, TOutputCar> {
+class TireRouter extends CrudRouter<TTire, TInputCreateTire, TInputUpdateTire, TOutputTire> {
   constructor() {
-    super(CarController);
+    super(TireController);
   }
 
   protected initRoutes(): void {
@@ -37,4 +37,4 @@ class CarRouter extends CrudRouter<TCar, TInputCreateCar, TInputUpdateCar, TOutp
   }
 }
 
-export default new CarRouter().getRouter();
+export default new TireRouter().getRouter();

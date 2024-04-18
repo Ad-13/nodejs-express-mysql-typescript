@@ -12,7 +12,7 @@ class CarService extends AbstractCrudService<TCar, TInputCreateCar, TInputUpdate
     'model',
     'year',
     'images',
-    'info',
+    'description',
     'price',
     'quantity',
   ];

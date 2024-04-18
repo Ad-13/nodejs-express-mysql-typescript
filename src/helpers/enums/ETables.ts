@@ -5,6 +5,6 @@ export const enum ETables {
   Clients = 'clients',
   Sellers = 'sellers',
   Cars = 'cars',
-  CarParts = 'car_parts',
+  Tires = 'tires',
   UserRoles = 'user_roles',
 }

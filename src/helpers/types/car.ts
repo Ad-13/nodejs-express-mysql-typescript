@@ -8,7 +8,7 @@ export type TCar = {
   quantity: number;
   price: number;
   images: string[];
-  info?: string;
+  description?: string;
 };
 
 export type TInputCreateCar = Omit<TCar, 'id'>;
