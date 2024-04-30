@@ -21,6 +21,7 @@ class CarRouter extends CrudRouter<TCar, TInputCreateCar, TInputUpdateCar, TOutp
       this.routeController.create,
     );
     this.router.get('/:id', this.routeController.getById);
+    this.router.post('/:id/contact', (this.routeController as CarController).createContactMessage);
     this.router.get('/', this.routeController.getAll);
     this.router.put(
       '/:id',

@@ -3,11 +3,18 @@ import { v4 } from 'uuid';
 import path from 'path';
 import fs from 'fs';
 
+import ContactMessageService from '@services/ContactMessageService';
 import CarService from '@services/CarService';
 
 import * as Errors from '@errors/index';
 
-import { TCar, TInputCreateCar, TInputUpdateCar, TOutputCar } from '@helpersTypes/car';
+import {
+  TCar,
+  TInputCreateCar,
+  TInputCreateContactMessage,
+  TInputUpdateCar,
+  TOutputCar,
+} from '@helpersTypes/car';
 import { TRequest, TRequestWithParams, TResponse } from '@helpersTypes/expressTypes';
 import { validateExpressData } from '@utils/validateExpressData';
 import { TId, TIdParams } from '@helpersTypes/id';
@@ -21,16 +28,41 @@ class CarController extends AbstractCrudController<
   TOutputCar
 > {
   protected service = CarService;
+  protected contactMessageService = ContactMessageService;
 
   protected validateCreateData = async (req: TRequest<TInputCreateCar>): Promise<void> => {
     const rules = [
       check('make', 'Make is required').notEmpty(),
       check('model', 'Model is required').notEmpty(),
-      check('year', 'year is required').notEmpty(),
-      check('price', 'price is required').notEmpty(),
+      check('year', 'Year is required').notEmpty(),
+      check('price', 'Price is required').notEmpty(),
     ];
 
     return validateExpressData(rules, req);
+  };
+
+  protected validatecreateContactMessageMessage = async (
+    req: TRequest<TInputCreateContactMessage>,
+  ): Promise<void> => {
+    const rules = [
+      check('name', 'Name is required').notEmpty(),
+      check('email', 'Email is required').notEmpty(),
+      check('message', 'Message is required').notEmpty(),
+    ];
+
+    return validateExpressData(rules, req);
+  };
+
+  public createContactMessage = async (
+    req: TRequest<TInputCreateContactMessage, TIdParams>,
+    res: TResponse<void>,
+  ): Promise<void> => {
+    await this.validatecreateContactMessageMessage?.(req);
+    const data = req.body;
+    const id = req.params.id;
+    const aaa = await this.contactMessageService.create({ ...data, carId: id });
+    console.log('aaa', aaa);
+    res.status(200).json();
   };
 
   public create = async (
