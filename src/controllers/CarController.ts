@@ -155,7 +155,9 @@ class CarController extends AbstractCrudController<
       await this.removeImage(image);
     });
 
-    super.deleteById(req, res);
+    const result = await this.service.deleteById(id);
+
+    res.status(200).json(result);
   };
 
   private removeImage = async (imageName: string): Promise<void> => {

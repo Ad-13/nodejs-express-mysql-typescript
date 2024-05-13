@@ -90,7 +90,7 @@ abstract class AbstractCrudModel<
 
       if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
 
-      return id as TId;
+      return Number(id);
     } catch (error) {
       return this.throwDatabaseError(`Failed to update ${this.tableName}.\n${error}`, 500);
     }
@@ -103,13 +103,14 @@ abstract class AbstractCrudModel<
 
     try {
       const result = await this.mysqlDB.executeQuery<ResultSetHeader>(sql, [id]);
+      console.log('result', result);
 
       if (!result.affectedRows) return this.throwDatabaseError('Not found', 404);
     } catch (error) {
       return this.throwDatabaseError(`Failed to delete.\n${error}`, 500);
     }
 
-    return id;
+    return Number(id);
   }
 }
 

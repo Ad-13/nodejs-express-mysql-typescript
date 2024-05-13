@@ -1,3 +1,3 @@
-export type TId = number | string;
+export type TId = number;
 
 export type TIdParams = { id: TId };

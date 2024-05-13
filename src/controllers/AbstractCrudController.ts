@@ -50,12 +50,15 @@ abstract class AbstractCrudController<TGeneralModel, TInputCreate, TInputUpdate,
     res.status(200).json(result);
   };
 
-  async deleteById(req: TRequestWithParams<TIdParams>, res: TResponse<TId>): Promise<void> {
+  public deleteById = async (
+    req: TRequestWithParams<TIdParams>,
+    res: TResponse<TId>,
+  ): Promise<void> => {
     const { id } = req.params;
     const result = await this.service.deleteById(id);
 
     res.status(200).json(result);
-  }
+  };
 }
 
 export default AbstractCrudController;
